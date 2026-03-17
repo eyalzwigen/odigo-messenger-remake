@@ -1,7 +1,24 @@
-import { io } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import { io, Socket } from "socket.io-client";
 
-export const socket = io("ws://localhost:8080");
+let socket: Socket | null = null;
 
-export function SendMessage(message: string): void {
-    socket.emit('message', message);
+export function connectUser(username: string) {
+    if (socket) return socket;
+    socket = io("ws://localhost:8080", {
+        auth: {
+            username: username
+        }
+    });
+
+    return socket;
+}
+
+export function getSocket(): Socket {
+    if (!socket) throw new Error('Socket not created yet. Please connect user first.');
+    return socket;
+}
+
+export function sendMessage(message: string): void {
+    getSocket().emit('message', message);
 }

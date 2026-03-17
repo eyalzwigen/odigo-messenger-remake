@@ -1,4 +1,4 @@
 export interface User {
-    id: string,
+    socket_id: string,
     username: string,
 }

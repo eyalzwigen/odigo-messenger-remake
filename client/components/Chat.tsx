@@ -1,25 +1,25 @@
 'use client';
 
 import { useEffect, useState, useRef } from "react";
-import {socket, SendMessage} from '../lib/socket';
+import {getSocket, sendMessage} from '../lib/socket';
 
 const Chat = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const userMessage = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        socket.on("message", (message: string) => {
+        getSocket().on("message", (message: string) => {
             setMessages(prev => [...prev, message]);
         });
 
         return () => {
-            socket.off('message');
+            getSocket().off('message');
         };
     }, []);
 
     const SendMessage = () => {
         if (!userMessage.current?.value) return;
-        socket.emit("message", userMessage.current.value);
+        getSocket().emit("message", userMessage.current.value);
         userMessage.current.value = "";
     };
 
