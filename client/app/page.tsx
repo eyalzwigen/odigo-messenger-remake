@@ -1,15 +1,21 @@
 'use client';
 
 import { useRef } from 'react';
-import Chat from '../components/Chat';
+import { useRouter } from 'next/navigation';
+import Chat from '../components/Chat/Chat';
 import { connectUser } from '../lib/socket'
 
 
 export default function Home() {
   const usernameInput = useRef<HTMLInputElement>(null)
+  const router = useRouter();
+
   const Authenticate = () => {
     if (!usernameInput.current?.value) return;
-    connectUser(usernameInput.current.value);
+
+    const socket = connectUser(usernameInput.current.value, () => {
+      router.push('/chat');
+    });
   }
 
   return (
@@ -17,7 +23,7 @@ export default function Home() {
       <h1>Welcome to Messenger!</h1>
       <label htmlFor="username">Enter A Username</label>
       <input name="username" placeholder="Username..." ref={usernameInput}></input>
-      <button>Start Chatting</button>
+      <button onClick={Authenticate}>Start Chatting</button>
     </div>
   );
 };

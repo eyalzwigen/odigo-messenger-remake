@@ -17,20 +17,44 @@ const io = new Server(server, {
 const connectedUsers = new Map<string, string>();
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-  const newUser = {
+
+  const user = {
     socket_id: socket.id,
     username: socket.handshake.auth.username
   };
-  connectedUsers.set(newUser.socket_id, newUser.username);
+  connectedUsers.set(user.socket_id, user.username);
+
+  console.log(`${user.username} has joined the chat.`);
 
   socket.on("message", (message) => {
     console.log(message);
-    io.emit('message', `${socket.id.substring(0, 2)} said ${message}`);
+    io.emit('message', user.username, message);
   });
 
+
+  socket.on(`disconnect`, (reason) => {
+    connectedUsers.delete(socket.id);
+    console.log(`${user.username} has left the chat.`);
+  });
 });
 
+
+
+/* //! Only after implementing database and authentication. Figure out what each part does, and how to implement user verification or some sht
+
+io.use((socket, next) => {
+    try {
+        // Authentication logic
+        if (!isValid(socket.handshake.auth)) {
+            return next(new Error('Authentication failed'));
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+*/
 
 /**
  * Returns all active public rooms with their connected users.

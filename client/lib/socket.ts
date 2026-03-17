@@ -1,15 +1,26 @@
-import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
-export function connectUser(username: string) {
-    if (socket) return socket;
+export function connectUser(username: string, onConnected: () => void) {
+    if (socket) {
+        onConnected();
+        return socket;
+    }
     socket = io("ws://localhost:8080", {
         auth: {
             username: username
         }
     });
+
+    socket.on('connect', () => {
+        onConnected();
+    });
+
+    socket.on('connect_error', (error) => {
+        alert(error);
+        socket = null;
+    })
 
     return socket;
 }
