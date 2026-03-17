@@ -1,0 +1,12 @@
+name: CI - Development
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  
