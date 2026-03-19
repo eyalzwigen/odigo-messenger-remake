@@ -1,6 +1,6 @@
 'use client';
 
-import Chat from '../../components/Chat/Chat';
+import Chat from '../../../../components/chat/Chat';
 
 export default function Home() {
   return (

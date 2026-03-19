@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// server/prisma/schema.prisma
+
+model User {
+  id            String   @id
+  username      String   @unique
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  rooms       UserRoom[] // all rooms this user has joined
+  owned_rooms Room[]     @relation("RoomOwner")
+  messages    Message[]
+}
+
+model Room {
+  id         String   @id @default(uuid())
+  name       String? // null for DM rooms
+  is_dm      Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  owner_id String? // null for DM rooms
+  owner    User?   @relation("RoomOwner", fields: [owner_id], references: [id])
+
+  members  UserRoom[] // all users in this room
+  messages Message[]
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  created_at DateTime @default(now())
+
+  sender_id String
+  sender    User   @relation(fields: [sender_id], references: [id])
+
+  room_id String
+  room    Room   @relation(fields: [room_id], references: [id])
+}
+
+model UserRoom {
+  id        String   @id @default(uuid())
+  joined_at DateTime @default(now())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  room_id String
+  room    Room   @relation(fields: [room_id], references: [id])
+
+  @@unique([user_id, room_id]) // a user can't join the same room twice
+}

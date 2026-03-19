@@ -1,15 +1,17 @@
+import 'dotenv'
 import { io, Socket } from "socket.io-client";
+import type { SocketData } from '../../shared/lib/socket'
 
 let socket: Socket | null = null;
 
-export function connectUser(username: string, onConnected: () => void) {
+export function connectUser(accessToken: string, onConnected: () => void) {
     if (socket) {
         onConnected();
         return socket;
     }
-    socket = io("ws://localhost:8080", {
+    socket = io(process.env.EXPRESS_SERVER_HOST, {
         auth: {
-            username: username
+            accessToken: accessToken
         }
     });
 

@@ -1,12 +1,20 @@
 {
   "dependencies": {
     "@ljharb/tsconfig": "^0.3.2",
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
+    "@supabase/supabase-js": "^2.99.2",
     "express": "^5.2.1",
+    "pg": "^8.20.0",
     "socket.io": "^4.8.3",
-    "typescript": "^5.9.3"
+    "supabase": "^2.81.3",
+    "typescript": "^5.9.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "dotenv": "^17.3.1",
+    "prisma": "^7.5.0"
   },
   "type": "module"
 }

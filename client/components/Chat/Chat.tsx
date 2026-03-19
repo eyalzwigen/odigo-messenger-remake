@@ -7,7 +7,7 @@ import styles from './Chat.module.css';
 
 const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
-    const userMessage = useRef<HTMLInputElement>(null);
+    const userMessage = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         getSocket().on("message", (sender_name: string, message: string) => {
@@ -21,6 +21,7 @@ const Chat = () => {
         return () => {
             getSocket().off('message');
         };
+
     }, []);
 
     const SendMessage = () => {
@@ -30,16 +31,26 @@ const Chat = () => {
     };
 
     return (
-    <div>
-        <ul id="messages">
-            {messages.map((msg, i) => (
-                <li key={i}>
-                    <p><label className={styles.sender_name}>{msg.sender_name}: </label>{msg.message}</p>
-                </li>
-            ))}
-        </ul>
-        <input placeholder="message" ref={userMessage}></input>
-        <button onClick={SendMessage}>Send</button>
+    <div className={styles.forum}>
+        <div className={styles.messages}>
+            <ul>
+                {messages.map((msg, i) => (
+                    <li key={i}>
+                        <label>
+                            <label className={styles.sender_name}>{msg.sender_name}: </label>
+                            <label>{msg.message}</label>
+                        </label>
+                        {/* //* Maybe: <hr></hr> */}
+                    </li>
+                ))}
+            </ul>
+        </div>
+        <div>
+            <form action={SendMessage} className={styles.compose}>
+                <textarea placeholder="message" ref={userMessage}></textarea>
+                <input type="submit" value="Send"></input>
+            </form>
+        </div>
     </div>
     );
 }

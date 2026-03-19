@@ -2,18 +2,18 @@
 
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Chat from '../components/Chat/Chat';
 import { connectUser } from '../lib/socket'
+import { useSession } from '@/lib/SessionContext';
 
 
 export default function Home() {
   const usernameInput = useRef<HTMLInputElement>(null)
   const router = useRouter();
+  const session = useSession();
 
-  const Authenticate = () => {
-    if (!usernameInput.current?.value) return;
+  const Start = () => {
 
-    const socket = connectUser(usernameInput.current.value, () => {
+    connectUser(session?.access_token!, () => {
       router.push('/chat');
     });
   }
@@ -21,9 +21,7 @@ export default function Home() {
   return (
     <div>    
       <h1>Welcome to Messenger!</h1>
-      <label htmlFor="username">Enter A Username</label>
-      <input name="username" placeholder="Username..." ref={usernameInput}></input>
-      <button onClick={Authenticate}>Start Chatting</button>
+
     </div>
   );
 };
