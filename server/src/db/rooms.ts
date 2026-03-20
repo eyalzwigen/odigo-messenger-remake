@@ -4,8 +4,6 @@ import type { User } from '../../../shared/lib/user.js';
 import type { PrivateRoom } from '../../../shared/lib/room.js';
 import { Prisma } from '../generated/prisma/client.js';
 
-//* So it would not confuse between the Room interface and Prisma's Room object
-
 /**
  *  An asynchronous database function that creates a private room. Used by API
  * 
