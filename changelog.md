@@ -1,4 +1,4 @@
-### Changes
+### Latest Changes
 - Configured Prisma and using it to talk to the Supabase database
 - Implemented database schema in /server/prisma/schema.prisma
 - Implemented Authentication with Supabase (Login & Registration): API functions on /server/src/routes/auth.ts
