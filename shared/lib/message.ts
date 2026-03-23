@@ -13,7 +13,6 @@ export interface PrivateMessage {
 
 export interface PublicMessage {
     message: string,
-    sentAt: Date,
-    sender: User,
-    room: PublicRoom
+    senderName: string,
+    roomId: string
 }

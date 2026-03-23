@@ -1,4 +1,4 @@
-const host: string = process.env.EXPRESS_SERVER_HOST ?? 'http://localhost:8080';
+const host: string = process.env.NEXT_PUBLIC_EXPRESS_SERVER_HOST ?? 'http://localhost:8080';
 
 /**
  * An handler function that is used to log in a user

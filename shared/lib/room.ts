@@ -1,4 +1,4 @@
-import type { PrivateMessage } from './message.js'
+import type { PrivateMessage, PublicMessage } from './message.js'
 import type { User } from './user.js'
 
 export interface PrivateRoom {
@@ -12,6 +12,7 @@ export interface PrivateRoom {
 
 export interface PublicRoom {
     roomId: string,
-    roomName: string,
-    members: User[]
+    members: User[],
+    messages?: PublicMessage[],
+    timeout?: any
 }

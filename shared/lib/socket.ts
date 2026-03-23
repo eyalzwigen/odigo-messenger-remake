@@ -1,5 +1,5 @@
-export interface SocketData {
-    accessToken: string,
-    userId: string,
-    userName: string
+export interface SocketMessage {
+    messageType: string,
+    message: string,
+    roomId: string
 }

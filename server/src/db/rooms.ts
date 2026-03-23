@@ -40,8 +40,7 @@ export async function createPrivateRoom(name: string, is_dm: boolean, owner_id: 
         members: [{
             // Create a user object
             id: res.owner_id!,
-            username: res.owner?.username!,
-            joinedAt: res.owner?.created_at!
+            username: res.owner?.username!
         }],
         createdAt: res.created_at!
     }

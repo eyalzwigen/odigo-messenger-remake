@@ -1,15 +1,15 @@
 import { Server } from 'socket.io';
 import { Router } from 'express';
-import type { Room } from '../../../shared/lib/room.js'
+import type { PublicRoom } from '../../../shared/lib/room.js'
 import type { User } from '../../../shared/lib/user.js'
 import type { ConnectedUsers } from "../lib/connectedUsers.js";
-import * as z from 'zod';
 import { CreateRoomRequestBodySchema } from '../lib/zodSchemas.js';
 import { createPrivateRoom } from '../db/rooms.js';
+import type { publicRoomsAvalible } from '../lib/publicRoomsAvalible.js';
 
 export default function roomsRouter (
     io: Server,
-    connectedUsers: ConnectedUsers
+    publicRooms: publicRoomsAvalible
 ) {
 
     const router = Router()
@@ -18,22 +18,16 @@ export default function roomsRouter (
      * Returns all active public rooms with their connected users.
      * Filters out the per-socket rooms that Socket.io creates automatically.
      * Doesn't search database becasue public rooms aren't saved in the database
-     */ //! Depracated! Need to update to the new way of Supabase!
+     */ 
     router.get('/fetch/public', async (req, res): Promise<void> => {
-        const rooms: Room[] = [];
-        const raw_rooms = io.of('/').adapter.rooms;
+        const rooms: PublicRoom[] = [];
 
-        for (const [roomName, usersList] of raw_rooms) {
-            if (connectedUsers.has(roomName)) continue; // skip socket-id rooms
-
-            const users: User[] = [];
-            for (const socketId of usersList) {
-                users.push(
-                    connectedUsers.get(socketId)!
-                );
+        for (const [roomName, roomObject] of publicRooms) {
+            const room = {
+                roomId: roomObject.roomId,
+                members: [],
             }
-
-            rooms.push({ room_name: roomName, users });
+            rooms.push(room);
         }
 
         res.json(rooms);
@@ -68,4 +62,21 @@ export default function roomsRouter (
     })
 
     return router;
+}
+
+export function deleteRoom(roomId: string, io: Server, publicRooms: publicRoomsAvalible) {
+    const room = publicRooms.get(roomId);
+    if (!room) return;
+
+    // 1. notify everyone in the room
+    io.to(roomId).emit('room_deleted', roomId);
+
+    // 2. remove all sockets from the room
+    io.socketsLeave(roomId);
+
+    // 3. clear the timer
+    if (room.timeout) clearTimeout(room.timeout);
+
+    // 4. clean up publicRooms map
+    publicRooms.delete(roomId);
 }

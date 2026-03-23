@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { createClient } from '@supabase/supabase-js'
 import type { Request, Response, NextFunction } from 'express';
 

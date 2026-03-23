@@ -3,9 +3,8 @@ import { createClient } from "@/lib/supabase/client";
 import AuthForm from "@/components/forms/AuthForm";
 import { useRouter } from "next/navigation";
 import { handleLogin } from "@/lib/handlers/auth";
-
+import { useEffect, useState } from "react";
 export default function Login() {
-
     const router = useRouter();
 
     const LogingUser = async (formData: FormData) => {
@@ -17,11 +16,12 @@ export default function Login() {
             //TODO: Implement a better error reporting mechanic (Best way is to put the error in the actual form (Like the danger thing from Bootstrap but in the actual form))
             alert(error);
         } else {
-            const supabase = createClient();
-            supabase.auth.setSession({
+            createClient().auth.setSession({
                 access_token,
                 refresh_token
             });
+
+            router.push('/rooms');
         }
     }
 

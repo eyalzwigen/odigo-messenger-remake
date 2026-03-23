@@ -3,35 +3,71 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from './supabase/client';
 import type { Session } from '@supabase/supabase-js';
+import { connectUser, disconnectUser, updateToken } from './socket';
+import { Socket } from 'socket.io-client';
 
-const SessionContext = createContext<Session | null>(null);
+type SessionContextType = {
+    session: Session | null,
+    socket: Socket | null  // ← add socket to context
+}
 
-export function SessionProvider({ children }: { children: React.ReactNode }) {
+const SessionContext = createContext<SessionContextType>({
+    session: null,
+    socket: null
+});
+
+export function SessionProvider({ children }: {children: any}) {
     const [session, setSession] = useState<Session | null>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const supabase = createClient();
+        let socketCreated: boolean = false;
 
-        // get initial session from cookies — no network request
         supabase.auth.getSession().then(({ data }) => {
             setSession(data.session);
+            setLoading(false);
         });
 
-        // keep session updated on login/logout/refresh
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
+            setLoading(false);
+
+            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+                if (!socketCreated) {
+                    socketCreated = true;
+                    const newSocket = connectUser(session.access_token, () => {
+                        console.log('Socket connected');
+                    });
+                    setSocket(newSocket);  // ← store socket in state
+                }
+                socket?.emit('leave_room');
+            } else if (event === 'TOKEN_REFRESHED' && session) {
+                updateToken(session.access_token);
+            } else if (event === 'SIGNED_OUT') {
+                disconnectUser();
+                setSocket(null);
+                socketCreated = false;
+            }
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
+    if (loading) return null;
+
     return (
-        <SessionContext.Provider value={session}>
+        <SessionContext.Provider value={{ session, socket }}>
             {children}
         </SessionContext.Provider>
     );
 }
 
 export function useSession() {
-    return useContext(SessionContext);
+    return useContext(SessionContext).session;
+}
+
+export function useSocket() {
+    return useContext(SessionContext).socket;  // ← new hook
 }

@@ -40,7 +40,7 @@ const AuthForm = ({ mode, action}: AuthMode) => {
                )}
                 <div>
                     <p>{SwitchModeText}</p>
-                    <button></button>
+                    <input type='submit' value={HeaderButtonText}/>
                 </div>
             </form>
         </div>

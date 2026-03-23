@@ -1,0 +1,17 @@
+.RoomListObject {
+    display: flex;
+    flex-direction: row;
+    background-color: blanchedalmond;
+    border-radius: 1px;
+    border-color: black;
+    padding: 5px;
+
+    button {
+        margin-block-start: 5px;
+        background-color: rgb(89, 89, 218);
+    }
+
+    button :hover {
+        background-color: rgb(78, 78, 190);
+    }
+}
