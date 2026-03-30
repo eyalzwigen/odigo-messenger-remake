@@ -2,14 +2,16 @@ import { Server } from 'socket.io';
 import type { ConnectedUsers } from '../lib/connectedUsers.ts';
 import type { publicRoomsAvalible } from '../lib/publicRoomsAvalible.js';
 import supabase from '../lib/supabase.js';
-import type { User } from '../../../shared/lib/user.ts';
-import type { PublicRoom } from '../../../shared/lib/room.js';
+import type { User } from '../../../packages/shared/lib/user.ts';
+import type { PublicRoom } from '../../../packages/shared/lib/room.js';
 import { deleteRoom } from '../routes/rooms.js';
+import type { SocketActiveLinks } from '../lib/siteLayeredRooms.js';
 
 export function registerSocketEvents(
     io: Server,
     connectedUsers: ConnectedUsers,
-    publicRooms: publicRoomsAvalible
+    publicRooms: publicRoomsAvalible,
+    socketActiveLinks: SocketActiveLinks
 ) {
     io.use(async (socket, next) => {
         const token = socket.handshake.auth.accessToken;
@@ -59,11 +61,11 @@ export function registerSocketEvents(
             for (const room of socket.rooms) {
                 if (room === roomId) {
                     socket.emit('joined_room', {roomId: roomId, messageHistory: []});
-                    return;
+                    continue;
                 }
+                socket.leave(room);
             }
 
-            for (const room of socket.rooms) socket.leave(room);
             socket.join(roomId);
             publicRooms.get(roomId)?.members.push({
                 id: socket.data.userId,
@@ -76,6 +78,77 @@ export function registerSocketEvents(
         socket.on('leave_room', () => {
             for (const room of socket.rooms) socket.leave(room);
         });
+
+    socket.on("active_link", async (url: string, fullSite: boolean) => {
+        console.log('raw url:', url);
+        
+        const link = fullSite ? new URL(url).hostname : url;
+        console.log('computed link:', link);
+
+        // add socket to active links for this url
+        if (!socketActiveLinks.has(link)) {
+            socketActiveLinks.set(link, new Set());
+        }
+        socketActiveLinks.get(link)!.add(socket.id);
+        console.log('size after add:', socketActiveLinks.get(link)?.size);
+        console.log('socket.id:', socket.id);
+
+        // leave current rooms
+        for (const room of socket.rooms) {
+            if (room !== socket.id) socket.leave(room);
+        }
+
+        const activeSocketIds = socketActiveLinks.get(link)!;
+        const validSocketIds = new Set<string>();
+
+        // validate which sockets are still connected
+        for (const socketId of activeSocketIds) {
+            const sockets = await io.in(socketId).fetchSockets();
+            if (sockets.length > 0) {
+                validSocketIds.add(socketId);
+            } else {
+                activeSocketIds.delete(socketId);
+            }
+        }
+
+        // not enough people on this page yet
+        if (validSocketIds.size < 2) return;
+
+        // create room if it doesn't exist
+        if (!publicRooms.has(link)) {
+            publicRooms.set(link, {
+                roomId: link,
+                members: [],
+                messages: [],
+                timeout: setTimeout(() => deleteRoom(link, io, publicRooms), 10 * 60 * 1000)
+            });
+        }
+
+        const room = publicRooms.get(link)!;
+        const messageHistory = room.messages ?? [];
+
+        // join all valid sockets that aren't already in the room
+        for (const socketId of validSocketIds) {
+            const sockets = await io.in(socketId).fetchSockets();
+            if (sockets.length === 0) continue;
+            const s = sockets[0];
+
+            if (!s?.rooms.has(link)) {
+                s?.join(link);
+
+                // add to members if not already there
+                const alreadyMember = room.members.some((m: { m: any }) => m.id === s?.data.userId);
+                if (!alreadyMember) {
+                    room.members.push({
+                        id: s?.data.userId,
+                        username: s?.data.username
+                    });
+                }
+
+                s?.emit('room_accepted', link, messageHistory);
+            }
+        }
+    });
 
         socket.on('create_public_room', (roomId: string) => {
             if (!roomId) {
@@ -129,7 +202,13 @@ export function registerSocketEvents(
                 if (sockets.size === 0) connectedUsers.delete(user.id);
                 // remove from all public rooms
                 for (const [roomName, room] of publicRooms) {
-                    room.members = room.members.filter(m => m.id !== user.id);
+                    room.members = room.members.filter((m: User) => m.id !== user.id);
+                }
+
+                // clean up socketActiveLinks
+                for (const [link, socketIds] of socketActiveLinks) {
+                    socketIds.delete(socket.id);
+                    if (socketIds.size === 0) socketActiveLinks.delete(link);
                 }
             }
         });

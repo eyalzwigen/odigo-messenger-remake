@@ -1,18 +1,15 @@
 import { Server } from 'socket.io';
 import { Router } from 'express';
-import type { PublicRoom } from '../../../shared/lib/room.js'
-import type { User } from '../../../shared/lib/user.js'
-import type { ConnectedUsers } from "../lib/connectedUsers.js";
-import { CreateRoomRequestBodySchema } from '../lib/zodSchemas.js';
+import type { PublicRoom } from '../../../packages/shared/lib/room.js'
+import { CreateRoomRequestBodySchema } from '../../../packages/shared/lib/zodSchemas.js';
 import { createPrivateRoom } from '../db/rooms.js';
 import type { publicRoomsAvalible } from '../lib/publicRoomsAvalible.js';
 
 export default function roomsRouter (
-    io: Server,
     publicRooms: publicRoomsAvalible
 ) {
 
-    const router = Router()
+    const router = Router();
 
     /**
      * Returns all active public rooms with their connected users.
@@ -54,7 +51,7 @@ export default function roomsRouter (
             try {
                 const res = await createPrivateRoom(roomName, isDm, owner?.id!);
             } catch(e) {
-
+                res.status(500).json(e);
             }
         }
 

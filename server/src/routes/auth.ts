@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { SupabaseClient, Session } from '@supabase/supabase-js'
-import { LoginForm, RegisterForm } from '../lib/zodSchemas.js';
+import { LoginForm, RegisterForm } from '../../../packages/shared/lib/zodSchemas.js';
 
 export default function authRouter (supabase: SupabaseClient) {
     

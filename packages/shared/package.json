@@ -1,0 +1,17 @@
+{
+  "name": "@odigo/shared",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./lib/socket": "./lib/socket.ts",
+    "./lib/handlers/auth": "./lib/handlers/auth.ts",
+    "./lib/handlers/rooms": "./lib/handlers/rooms.ts",
+    "./lib/*": "./lib/*.ts"
+  },
+  "devDependencies": {
+    "@odigo/typescript-config": "*",
+    "@types/node": "^22.19.15",
+    "typescript": "^5"
+  }
+}

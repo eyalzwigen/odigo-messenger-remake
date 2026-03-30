@@ -1,0 +1,35 @@
+{
+  "name": "@odigo/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./globals.css": "./styles/globals.css",
+    "./components/*": "./src/components/*.tsx",
+    "./components/chat/*": "./src/components/chat/*.tsx",
+    "./components/forms/*": "./src/components/forms/*.tsx",
+    "./components/PublicRoomListObject/*": "./src/components/PublicRoomListObject/*.tsx",
+    "./lib/*": "./src/lib/*.ts",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "generate:component": "turbo gen react-component",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@odigo/eslint-config": "*",
+    "@odigo/typescript-config": "*",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "@odigo/shared": "*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}
