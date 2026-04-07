@@ -103,7 +103,7 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
                     t.style.height = 'auto';
                     t.style.height = `${t.scrollHeight}px`;
                 }}
-                className="flex-1 min-h-[40px] max-h-[50vh] resize-none border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 py-2 text-[#b5bac1] placeholder:text-[#6d6f78] text-sm leading-relaxed"
+                className="flex-1 min-h-[40px] max-h-[50vh] resize-none border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 py-2.5 text-[#b5bac1] placeholder:text-[#6d6f78] text-sm leading-relaxed"
                 placeholder={`Message #${roomId}`}
                 ref={userMessage}
                 rows={1}

@@ -19,7 +19,7 @@ export default function roomsRouter (
     router.get('/fetch/public', async (req, res): Promise<void> => {
         const rooms: PublicRoom[] = [];
 
-        for (const [roomName, roomObject] of publicRooms) {
+        for (const [roomObject] of publicRooms.values()) {
             const room = {
                 roomId: roomObject.roomId,
                 members: [],

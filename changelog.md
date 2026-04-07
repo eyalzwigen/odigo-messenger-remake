@@ -1,17 +1,6 @@
 ### Latest Changes
-- Configured Prisma and using it to talk to the Supabase database
-- Implemented database schema in /server/prisma/schema.prisma
-- Implemented Authentication with Supabase (Login & Registration): API functions on /server/src/routes/auth.ts
-- Implemented authentication handlers at /client/lib/handlers/auth.ts
-- Implemented a supabase proxy that saves session data in a cookie
-- Implemented /client/lib/supabase/client.ts: making a browserClient that saves session data in a cookie
-- Created a simple dynacmic auth form that can change their mode from login to register
-- Added auth pages in /client/app/auth: Login, Registration, and account confirmation notice
-- Added client/lib/SessionContext.tsx as a middleware that makes the supabase session avalible on all pages, and automatically updates access_token before it expires
-- Implemented createPrivateRoom() in /server/src/db/rooms.ts: an handler function that saves in the database a new room and returns a PrivateRoom object
-- Added a type called SocketData which has all of the user data that is supposed to be in or linked to a socket
-- added the object user to a network request in /server/src/types/express.d.ts
-- Added an API function that creates a  private room (uses createPrivateRoom()) and in the middle of implementing a function that creates a public room
-- Added a middleware function to the socket.io server that authenticates every new socker connection by validating their access_token (jwt)
-- Implemented Zod validation for all API functions
-- Added a bit of styling to the chat component
+Set up a monorepo
+added a wxt extension project
+usign now shadcn for ui
+currently working on friends api
+styled the chat to look like discord

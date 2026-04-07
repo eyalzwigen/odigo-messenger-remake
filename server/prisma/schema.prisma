@@ -7,12 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum RequestStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
 model User {
   id         String   @id @db.Uuid
   username   String   @unique
@@ -88,7 +82,6 @@ model Friendship {
 model FriendRequest {
   id         String        @id @default(uuid()) @db.Uuid
   created_at DateTime      @default(now())
-  status     RequestStatus @default(PENDING)
 
   sender_id String @db.Uuid
   sender    User   @relation("FriendRequestSender", fields: [sender_id], references: [id])
@@ -102,7 +95,6 @@ model FriendRequest {
 model GroupInvite {
   id         String        @id @default(uuid()) @db.Uuid
   created_at DateTime      @default(now())
-  status     RequestStatus @default(PENDING)
 
   room_id String @db.Uuid
   room    Room   @relation(fields: [room_id], references: [id])

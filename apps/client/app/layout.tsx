@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@odigo/ui/globals.css";
 import { SessionProvider } from "@/lib/SessionContext";
+import Navbar from "@/components/Navbar";
 
 
 const fontSans = Geist({
@@ -29,7 +30,12 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased dark`}
       >
       <SessionProvider>
-        {children}
+        <div className="flex flex-col h-screen">
+          <Navbar />
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
+        </div>
       </SessionProvider>
       </body>
     </html>

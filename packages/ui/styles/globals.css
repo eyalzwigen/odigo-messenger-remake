@@ -49,77 +49,108 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Odigo semantic tokens — accessible as Tailwind utilities */
+  --color-online: var(--online);
+  --color-danger: var(--danger);
+  --color-violet: var(--violet);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
 }
 
 :root {
-  /* Discord light mode */
-  --background: #ffffff;
-  --foreground: #2e3338;
-  --card: #f2f3f5;
-  --card-foreground: #2e3338;
-  --popover: #ffffff;
-  --popover-foreground: #2e3338;
-  --primary: #5865f2;
-  --primary-foreground: #ffffff;
-  --secondary: #f2f3f5;
-  --secondary-foreground: #4f5660;
-  --muted: #ebedef;
-  --muted-foreground: #747f8d;
-  --accent: #5865f2;
-  --accent-foreground: #ffffff;
-  --destructive: #ed4245;
-  --border: #e3e5e8;
-  --input: #e3e5e8;
-  --ring: #6d6f78; 
-  --chart-1: #5865f2;
-  --chart-2: #57f287;
-  --chart-3: #fee75c;
-  --chart-4: #eb459e;
-  --chart-5: #ed4245;
-  --radius: 0.5rem;
-  --sidebar: #f2f3f5;
-  --sidebar-foreground: #2e3338;
-  --sidebar-primary: #5865f2;
+  /* ─── Odigo Dark Cosmic ──────────────────────────────────────────────────── */
+  --background:          #09090e;  /* near-black base canvas                   */
+  --foreground:          #ededf0;  /* primary text — warm off-white             */
+
+  --card:                #111118;  /* slightly lifted surface (cards, panels)   */
+  --card-foreground:     #ededf0;
+
+  --popover:             #16161f;  /* dropdowns, tooltips, menus                */
+  --popover-foreground:  #ededf0;
+
+  --primary:             #6d5fff;  /* electric violet — CTAs, links, focus      */
+  --primary-foreground:  #ffffff;
+
+  --secondary:           #1a1a26;  /* secondary surfaces (sidebar rows, chips)  */
+  --secondary-foreground:#ededf0;
+
+  --muted:               #1a1a26;  /* muted backgrounds (skeleton, disabled)    */
+  --muted-foreground:    #8b8ba7;  /* placeholder, secondary text               */
+
+  --accent:              #6d5fff;  /* same as primary for shadcn compat         */
+  --accent-foreground:   #ffffff;
+
+  --destructive:         #ff4d6a;  /* errors, delete, danger actions            */
+
+  --border:              #1e1e2e;  /* subtle dividers                           */
+  --input:               #1a1a26;  /* input field backgrounds                   */
+  --ring:                #6d5fff;  /* focus ring                                */
+
+  --chart-1:             #6d5fff;  /* violet                                    */
+  --chart-2:             #22d474;  /* green                                     */
+  --chart-3:             #ffe066;  /* amber                                     */
+  --chart-4:             #ff4d6a;  /* red                                       */
+  --chart-5:             #38bdf8;  /* sky                                       */
+
+  --radius:              0.625rem;
+
+  /* Sidebar */
+  --sidebar:                    #0d0d14;
+  --sidebar-foreground:         #ededf0;
+  --sidebar-primary:            #6d5fff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ebedef;
-  --sidebar-accent-foreground: #4f5660;
-  --sidebar-border: #e3e5e8;
-  --sidebar-ring: #5865f2;
+  --sidebar-accent:             #1a1a26;
+  --sidebar-accent-foreground:  #8b8ba7;
+  --sidebar-border:             #1e1e2e;
+  --sidebar-ring:               #6d5fff;
+
+  /* ─── Odigo Semantic ─────────────────────────────────────────────────────── */
+  --online:        #22d474;  /* presence dot, live room indicator                */
+  --danger:        #ff4d6a;  /* notification badge, destructive                  */
+  --violet:        #6d5fff;  /* accent alias for inline use                      */
+  --surface:       #111118;  /* lifted surface alias (same as card)              */
+  --surface-raised:#1a1a26;  /* doubly-lifted surface (modals, hover rows)       */
 }
 
 .dark {
-  /* Discord dark mode */
-  --background: #313338;
-  --foreground: #dbdee1;
-  --card: #2b2d31;
-  --card-foreground: #dbdee1;
-  --popover: #2b2d31;
-  --popover-foreground: #dbdee1;
-  --primary: #5865f2;
-  --primary-foreground: #ffffff;
-  --secondary: #2b2d31;
-  --secondary-foreground: #dbdee1;
-  --muted: #383a40;
-  --muted-foreground: #b5bac1;
-  --accent: #5865f2;
-  --accent-foreground: #ffffff;
-  --destructive: #ed4245;
-  --border: #606269;
-  --input: #404249;
-  --ring: #6d6f78; 
-  --chart-1: #5865f2;
-  --chart-2: #57f287;
-  --chart-3: #fee75c;
-  --chart-4: #eb459e;
-  --chart-5: #ed4245;
-  --sidebar: #2b2d31;
-  --sidebar-foreground: #dbdee1;
-  --sidebar-primary: #5865f2;
+  /* Odigo is always dark — mirror :root so shadcn's .dark variant also works */
+  --background:          #09090e;
+  --foreground:          #ededf0;
+  --card:                #111118;
+  --card-foreground:     #ededf0;
+  --popover:             #16161f;
+  --popover-foreground:  #ededf0;
+  --primary:             #6d5fff;
+  --primary-foreground:  #ffffff;
+  --secondary:           #1a1a26;
+  --secondary-foreground:#ededf0;
+  --muted:               #1a1a26;
+  --muted-foreground:    #8b8ba7;
+  --accent:              #6d5fff;
+  --accent-foreground:   #ffffff;
+  --destructive:         #ff4d6a;
+  --border:              #1e1e2e;
+  --input:               #1a1a26;
+  --ring:                #6d5fff;
+  --chart-1:             #6d5fff;
+  --chart-2:             #22d474;
+  --chart-3:             #ffe066;
+  --chart-4:             #ff4d6a;
+  --chart-5:             #38bdf8;
+  --sidebar:                    #0d0d14;
+  --sidebar-foreground:         #ededf0;
+  --sidebar-primary:            #6d5fff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #383a40;
-  --sidebar-accent-foreground: #b5bac1;
-  --sidebar-border: #1e1f22;
-  --sidebar-ring: #5865f2;
+  --sidebar-accent:             #1a1a26;
+  --sidebar-accent-foreground:  #8b8ba7;
+  --sidebar-border:             #1e1e2e;
+  --sidebar-ring:               #6d5fff;
+  --online:        #22d474;
+  --danger:        #ff4d6a;
+  --violet:        #6d5fff;
+  --surface:       #111118;
+  --surface-raised:#1a1a26;
 }
 
 @layer base {
@@ -132,4 +163,42 @@
   html {
     @apply font-sans;
   }
+}
+
+/* ─── Odigo Utility Classes ──────────────────────────────────────────────────
+   Use these alongside Tailwind utilities when you need the semantic tokens
+   without waiting for @theme to expose them.
+   e.g. <span className="status-online" />
+──────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Presence indicator dot */
+  .status-online {
+    background-color: var(--online);
+    box-shadow: 0 0 6px var(--online);
+  }
+  .status-offline {
+    background-color: var(--muted-foreground);
+  }
+
+  /* Violet glow — use on active/focused interactive elements */
+  .glow-violet {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--violet) 60%, transparent);
+  }
+  .glow-violet-lg {
+    box-shadow: 0 0 28px color-mix(in srgb, var(--violet) 40%, transparent);
+  }
+
+  /* Pulse animation for live / radar / online indicators */
+  .pulse-online {
+    animation: pulse-online 2s ease-in-out infinite;
+  }
+
+  /* Surface shorthands */
+  .bg-surface       { background-color: var(--surface); }
+  .bg-surface-raised{ background-color: var(--surface-raised); }
+}
+
+@keyframes pulse-online {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.15); }
 }

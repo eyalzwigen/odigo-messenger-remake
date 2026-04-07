@@ -55,7 +55,7 @@ function AppContent() {
 export default function App() {
     return (
         <SessionProvider>
-            <div className="dark w-[400px] h-[500px] bg-background text-foreground overflow-hidden p-2">
+            <div className="dark bg-background text-foreground overflow-hidden p-2">
                 <AppContent />
             </div>
         </SessionProvider>
