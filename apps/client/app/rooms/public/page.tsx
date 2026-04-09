@@ -1,4 +1,9 @@
 'use client'
+
+// Public rooms browser page.
+// Fetches the list of active public rooms from the API and renders
+// a joinable list.  Also provides a button to create a new room.
+
 import { joinRoom } from "@odigo/shared/lib/socket";
 import { useRouter } from "next/navigation";
 import { PublicRoom } from "@odigo/shared/lib/room";
@@ -9,11 +14,21 @@ import { useSocket } from "@/lib/SessionContext";
 import { Socket } from "socket.io-client";
 import { getAccessToken } from "@/lib/supabase/client";
 
+/**
+ * The /rooms/public page.
+ * Displays all currently active public rooms and allows the user to join one
+ * or navigate to the room creation page.
+ */
 export default function BrowseRooms () {
     const socket: Socket = useSocket()!;
     const router = useRouter();
     const [publicRooms, setRooms] = useState<PublicRoom[]>();
 
+    /**
+     * Joins the selected room over the socket and navigates to its chat page.
+     *
+     * @param roomId - The ID of the room to join
+     */
     const OnJoin = async  (roomId: string) => {
         const { error } = await joinRoom(socket, roomId);
         if (error) {
@@ -23,10 +38,12 @@ export default function BrowseRooms () {
         }
     };
 
+    /** Navigates to the room creation form */
     const onCreateRoom = () => {
         router.push('/rooms/create');
     }
 
+    // Fetch the room list once on mount using the current user's access token
     useEffect(() => {
         const fetchRooms = async () => {
             const token: string = await getAccessToken() ?? "";

@@ -1,5 +1,9 @@
 'use client';
 
+// The main chat UI component for public rooms.
+// Handles incoming socket messages, renders the message list, auto-scrolls
+// to the latest message, and provides a textarea for sending new messages.
+
 import { useEffect, useState, useRef } from "react";
 import { sendMessage } from '@odigo/shared/lib/socket';
 import type { PublicMessage } from '@odigo/shared/lib/message';
@@ -10,20 +14,41 @@ import { Card } from "../card";
 import { Textarea } from "../textarea";
 import { Plus, Send, Smile, Zap } from "lucide-react"
 
+/** Props required by the PublicChat component */
 export type ChatData = {
+    /** The ID of the room whose messages to display */
     roomId: string,
+    /** Message history loaded before the component mounted */
     pastMessages: PublicMessage[],
+    /** Called when the server emits 'room_deleted' for this room */
     onRoomDeleted: () => void,
+    /** The active Socket.IO socket for sending and receiving messages */
     socket: Socket
 }
 
+/**
+ * Real-time chat UI for a public room.
+ *
+ * On mount, seeds the message list with pastMessages (history from before
+ * joining) and attaches socket listeners for new messages and room deletion.
+ * Auto-scrolls to the newest message whenever the list changes.
+ *
+ * Sending is triggered by clicking the Send area or pressing Enter (without
+ * Shift).  Shift+Enter inserts a newline instead of submitting.
+ * The textarea auto-grows with its content up to 50% of the viewport height.
+ *
+ * @param roomId - The room this component is displaying
+ * @param pastMessages - Pre-existing messages to show on first render
+ * @param onRoomDeleted - Navigation handler called when the room is deleted
+ * @param socket - The shared Socket.IO connection
+ */
 const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => {
     const [messages, setMessages] = useState<PublicMessage[]>([]);
     const userMessage = useRef<HTMLTextAreaElement>(null);
     const lastMessageRef = useRef<HTMLLIElement>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
 
-
+    // Seed the message list with history once pastMessages is available
     useEffect(() => {
         setMessages(pastMessages);
         console.log(pastMessages);
@@ -31,6 +56,7 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
     }, [pastMessages]);
 
     useEffect(() => {
+        // Append incoming messages to the list as they arrive
         socket.on('message', (senderName: string, message: string) => {
 
             const newMessage: PublicMessage = {
@@ -42,26 +68,34 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
             setMessages(prev => [...prev, newMessage]);
         });
 
+        // Notify the parent when the server deletes the room
         socket.on('room_deleted', (roomId: string) => {
             onRoomDeleted()
         });
 
+        // Remove the message listener when the component unmounts or roomId changes
+        // to avoid accumulating duplicate listeners across re-renders.
         return () => {
             socket.off('message');
         };
 
     }, [roomId]);
 
+    // Scroll the last message into view whenever the list changes
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView();
     }, [messages]);
 
+    /**
+     * Reads the textarea value, emits a 'message' socket event, and clears
+     * the input.  Does nothing if the textarea is empty.
+     */
     const SendMessage = () => {
         if (!userMessage.current?.value) return;
         sendMessage(
-            socket, 
+            socket,
             {
-            roomId: roomId, 
+            roomId: roomId,
             message: userMessage.current.value
         });
         userMessage.current.value = "";
@@ -72,8 +106,9 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
         <ScrollArea className="grow">
             <ul>
                 {messages.map((msg, i) => (
+                    // The ref on the last item is used for auto-scrolling
                     <li key={i} ref={i === messages.length - 1 ? lastMessageRef : null} >
-                        
+
                         <span>
                             <span className="text-blue-700 font-bold">{msg.senderName}: </span>
                             <span>{msg.message}</span>
@@ -83,8 +118,8 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
                 ))}
             </ul>
         </ScrollArea>
-        <form 
-            onSubmit={(e) => { e.preventDefault(); SendMessage(); }} 
+        <form
+            onSubmit={(e) => { e.preventDefault(); SendMessage(); }}
             className="flex items-center gap-3 mx-4 mb-6 px-4 py-2.5 bg-input rounded-lg border border-transparent focus-within:border-ring transition-colors"
         >
             <button type="button" className="shrink-0 text-[#b5bac1] hover:text-white transition-colors">
@@ -93,12 +128,14 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
 
             <Textarea
                 onKeyDown={(e) => {
+                    // Submit on Enter; allow Shift+Enter to insert a newline
                     if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         SendMessage();
                     }
                 }}
                 onInput={(e) => {
+                    // Grow the textarea to fit its content, up to 50vh
                     const t = e.target as HTMLTextAreaElement;
                     t.style.height = 'auto';
                     t.style.height = `${t.scrollHeight}px`;

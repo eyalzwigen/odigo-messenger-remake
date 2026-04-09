@@ -2,32 +2,32 @@ import { getHost } from "./host";
 const host = getHost();
 /**
  * An handler function that is used to log in a user
- * 
+ *
  * @remarks
  * The function sends a POST request to /api/auth/login
  * with an email and a password. The API function uses an admin client
- * (client with service role) and logs in the user. 
- * 
+ * (client with service role) and logs in the user.
+ *
  * @param email - The user's email
  * @param password  - The user's password
  * @returns a Promise of:
- * an access token, a refresh token, and a @null error if there were no errors
- * a @null access token, a @null refresh token, and an error if there was an error
+ * an access token, a refresh token, and a null error if there were no errors
+ * a null access token, a null refresh token, and an error if there was an error
  */
 export async function handleLogin(
 
-    email: string, 
+    email: string,
     password: string
-    
+
 ): Promise<
-{access_token: string, refresh_token: string, error: null} | 
-{access_token: null, refresh_token: null, error: string}> 
+{access_token: string, refresh_token: string, error: null} |
+{access_token: null, refresh_token: null, error: string}>
 {
 
     const req = await fetch(`${host}/api/auth/login`, {
         method: 'POST',
         body: JSON.stringify({
-            email: email, 
+            email: email,
             password: password
         }),
         headers: {'Content-Type': 'application/json'}
@@ -43,23 +43,23 @@ export async function handleLogin(
 
 /**
  * An handler function that is used to register a user
- * 
+ *
  * @remarks
  * The function sends a POST request to /api/auth/register
- * with a a username, email, a password, and a password confirmation. 
- * The API function uses an admin client (client with service role) registers the user. 
- * 
+ * with a username, email, a password, and a password confirmation.
+ * The API function uses an admin client (client with service role) to register the user.
+ *
  * @param userName - New account's username
  * @param email  - New account's email
  * @param password - New account's password
  * @param confirmation - New account's password confirmation
  * @returns a Promise of:
- * @null if there were no errors (User needs to confirm their email)
- * @string if there was an error
+ * null if there were no errors (User needs to confirm their email)
+ * string if there was an error
  */
 export async function handleRegisteration(
     userName: string,
-    email: string, 
+    email: string,
     password: string,
     confirmation: string
 
@@ -69,7 +69,7 @@ export async function handleRegisteration(
         method: 'POST',
         body: JSON.stringify({
             username: userName,
-            email: email, 
+            email: email,
             password: password,
             confirmation: confirmation
         }),

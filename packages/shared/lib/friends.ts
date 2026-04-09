@@ -2,6 +2,11 @@ import type { PrivateRoom } from "./room";
 import type { User } from "./user"
 import { z } from 'zod'
 
+/**
+ * A friend request sent from one user to another.
+ * sender and receiver are optional because they are joined on the server --
+ * the client only sends / receives the ID fields.
+ */
 export interface FriendRequest {
     id: string,
     createdAt: Date,
@@ -13,7 +18,14 @@ export interface FriendRequest {
     receiver?: User      // populated server-side, not validated
 }
 
-// Validates raw incoming data only — sender/receiver are joined server-side
+/**
+ * Zod schema for validating raw incoming friend request data.
+ * Uses snake_case field names to match the database column names.
+ *
+ * Note: sender/receiver User objects are never in the incoming payload --
+ * they are joined server-side after validation.
+ */
+// Validates raw incoming data only -- sender/receiver are joined server-side
 export const FriendRequestValidator = z.object({
     id:  z.string(),
     created_at:  z.date(),
@@ -21,8 +33,16 @@ export const FriendRequestValidator = z.object({
     receiver_id: z.string(),
 });
 
+/** The validated shape of a friend request as it comes from the client. */
 export type FriendRequestInput = z.infer<typeof FriendRequestValidator>;
 
+/**
+ * A confirmed friendship between two users.
+ *
+ * user_a and user_b are optional join fields populated only when the query
+ * includes relations.  dm_room_id is null until the first message is sent --
+ * the DM room is created lazily on demand.
+ */
 export interface Friendship {
     id: string,
     created_at: Date,
@@ -37,6 +57,9 @@ export interface Friendship {
     dm_room?: PrivateRoom
 };
 
+/**
+ * Zod schema for validating a Friendship object (e.g. when received via API).
+ */
 export const FriendshipValidator = z.object({
     id: z.string(),
     created_at: z.date(),

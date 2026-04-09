@@ -1,6 +1,27 @@
+// Server-side Supabase client and session refresh logic for Next.js middleware.
+//
+// This module is used in the middleware (apps/client/proxy.ts) to intercept
+// every incoming request, refresh the Supabase session if needed, and redirect
+// unauthenticated users to the login page.
+//
+// IMPORTANT: Do not reuse the Supabase client across requests (e.g. in a
+// module-level variable).  Always create a new one per request to avoid
+// session cross-contamination in Fluid Compute / serverless environments.
+
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+/**
+ * Refreshes the Supabase session for the incoming request and redirects
+ * unauthenticated users to /auth/login.
+ *
+ * The cookie mutation logic is boilerplate required by @supabase/ssr to keep
+ * the browser and server in sync.  Deviating from it can cause users to be
+ * randomly signed out.
+ *
+ * @param request - The incoming Next.js middleware request
+ * @returns A NextResponse that either continues the request or redirects
+ */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,

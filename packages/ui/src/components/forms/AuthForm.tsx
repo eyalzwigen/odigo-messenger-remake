@@ -1,20 +1,38 @@
+// Reusable authentication form used for both login and registration.
+// Renders different fields based on the mode prop and adapts its heading
+// and footer link accordingly.
+
 import { Button } from '@odigo/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@odigo/ui/components/card';
 import { Input } from '@odigo/ui/components/input';
 import { Label } from '@odigo/ui/components/label';
 
 
+/** Controls which variant of the form is rendered */
 type AuthMode = {
+    /** 'login' shows email + password; 'register' also shows username + confirmation */
     mode: 'login' | 'register',
+    /** Called with the FormData when the form is submitted */
     action: (formData: FormData) => void;
 };
 
+/**
+ * A centered card containing a login or registration form.
+ *
+ * The form uses a native HTML action (not onSubmit) so it works with both
+ * Next.js Server Actions and client-side handlers.
+ *
+ * @param mode - 'login' or 'register'
+ * @param action - The form submit handler
+ */
 const AuthForm = ({ mode, action}: AuthMode) => {
 
+    // The button label and card title are derived from mode
     const HeaderButtonText = mode === 'login'? 'Login' : 'Register';
 
-    const SwitchModeText = mode === 'login' ? 
-    <a href='/auth/register'>Create a New Account</a> : 
+    // Link at the bottom that lets users switch between login and register
+    const SwitchModeText = mode === 'login' ?
+    <a href='/auth/register'>Create a New Account</a> :
     <a href='/auth/login'>I Already Have an Account</a>;
 
     return (
@@ -25,6 +43,7 @@ const AuthForm = ({ mode, action}: AuthMode) => {
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                     <form action={action} className="flex flex-col gap-4">
+                        {/* Username field is only shown in register mode */}
                         {mode === 'register' && (
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor='username'>Username</Label>
@@ -39,6 +58,7 @@ const AuthForm = ({ mode, action}: AuthMode) => {
                             <Label htmlFor='password'>Password</Label>
                             <Input type='password' name='password' id='password' />
                         </div>
+                        {/* Password confirmation field is only shown in register mode */}
                         {mode === 'register' && (
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor='confirmation'>Confirm Password</Label>
