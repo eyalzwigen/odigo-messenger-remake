@@ -7,19 +7,17 @@ import { Router } from 'express';
 import type { PublicRoom } from '../../../packages/shared/lib/room.js'
 import { CreateRoomRequestBodySchema } from '../../../packages/shared/lib/zodSchemas.js';
 import { createPrivateRoom } from '../db/rooms.js';
-import type { publicRoomsAvalible } from '../lib/publicRoomsAvalible.js';
+import type { publicRoomsAvalible } from '../lib/roomsAvalible.js';
 
 /**
  * Builds and returns the rooms router.
  *
+ * @param io - The socket.io server object
  * @param publicRooms - Shared in-memory map of active public rooms
  * @returns An Express Router with room CRUD handlers
  */
-//! This function is called in index.ts as roomsRouter(io, publicRooms) but its
-//! signature only accepts one parameter (publicRooms).  At runtime, io is
-//! bound to the publicRooms parameter and the actual publicRooms map is
-//! silently ignored.  The second argument is dropped.
 export default function roomsRouter (
+    io: Server,
     publicRooms: publicRoomsAvalible
 ) {
 
@@ -41,6 +39,7 @@ export default function roomsRouter (
         //! but publicRooms.values() yields PublicRoom objects directly.
         //! This means roomObject is actually the first character of the
         //! iterable, not a PublicRoom.  Should be: for (const roomObject of publicRooms.values())
+    
         for (const [roomObject] of publicRooms.values()) {
             const room = {
                 roomId: roomObject.roomId,
@@ -100,19 +99,19 @@ export default function roomsRouter (
  * @param io - The Socket.IO server instance, used to broadcast and evict sockets
  * @param publicRooms - The shared in-memory rooms map to remove the entry from
  */
-export function deleteRoom(roomId: string, io: Server, publicRooms: publicRoomsAvalible) {
+export function deletePublicRoom(roomId: string, io: Server, publicRooms: publicRoomsAvalible) {
     const room = publicRooms.get(roomId);
     if (!room) return;
 
-    // 1. notify everyone in the room
+    // notify everyone in the room
     io.to(roomId).emit('room_deleted', roomId);
 
-    // 2. remove all sockets from the room
+    // remove all sockets from the room
     io.socketsLeave(roomId);
 
-    // 3. clear the timer
+    // clear the timer
     if (room.timeout) clearTimeout(room.timeout);
 
-    // 4. clean up publicRooms map
+    // clean up publicRooms map
     publicRooms.delete(roomId);
 }

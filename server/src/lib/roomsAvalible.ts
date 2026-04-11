@@ -1,4 +1,4 @@
-import type { PublicRoom } from "../../../packages/shared/lib/room.js";
+import type { PrivateRoom, PublicRoom } from "../../../packages/shared/lib/room.js";
 
 /**
  * Tracks all currently active public rooms in memory.
@@ -12,3 +12,5 @@ import type { PublicRoom } from "../../../packages/shared/lib/room.js";
  * each PublicRoom.
  */
 export type publicRoomsAvalible = Map<string, PublicRoom>;
+
+export type privateRoomsActive = Map<string, PrivateRoom>;

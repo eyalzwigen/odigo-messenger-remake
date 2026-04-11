@@ -4,7 +4,7 @@
 
 import { Server } from 'socket.io';
 import type { ConnectedUsers } from '../lib/connectedUsers.ts';
-import type { publicRoomsAvalible } from '../lib/publicRoomsAvalible.js';
+import type { publicRoomsAvalible } from '../lib/roomsAvalible.js';
 import supabase from '../lib/supabase.js';
 import type { User } from '../../../packages/shared/lib/user.ts';
 import type { PublicRoom } from '../../../packages/shared/lib/room.js';

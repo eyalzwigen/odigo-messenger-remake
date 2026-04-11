@@ -45,3 +45,19 @@ export async function createPrivateRoom(name: string, is_dm: boolean, owner_id: 
         createdAt: res.created_at!
     }
 }
+
+export async function getPrivateRoom(roomId: string, userId: string): Promise<PrivateRoom | null> {
+    const res = await prisma.room
+}
+
+/* For group chats */
+export async function leavePrivateRoom(roomId: string, userId: string): Promise<PrivateRoom | null> {
+
+}
+
+/* For DM rooms */
+export async function deletePrivateRoom(roomId: string, userId :string): Promise<PrivateRoom | null> {
+    const room = await getPrivateRoom(roomId, userId);
+    if (!room) return null;
+
+}

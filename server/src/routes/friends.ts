@@ -155,7 +155,28 @@ export default function friendsRouter (
      *
      * Removes a friendship between two users.
      */
-    router.post('/unfriend', async (req, res) => {
+    router.delete('/:id', async (req, res) => {
         //! Unfriending deletes the chat also
+
+        // Extract user id from request
+        const friendId: string = req.params.id;
+        if (!friendId) {
+            res.status(400).json({error: "No friend id given"});
+            return;
+        }
+
+        // Check if user has a friendship with the user extracted
+        const checkFriendship: Friendship | null = await getFriendship(req.user?.id!, friendId);
+
+        if (checkFriendship) {
+            //TODO: Delete friendship-based chat room from DB. 
+            //* the chat will be read only and only avalible via cache
+            
+            //TODO: Delete friendship
+
+            //TODO: response of 200 with json response that indicates the unfriending
+        } else {
+            //TODO: Send a 409 error because you can't unfriend someone you're not friends with
+        }
     });
 }

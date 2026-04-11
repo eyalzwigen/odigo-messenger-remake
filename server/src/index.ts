@@ -10,7 +10,7 @@ import type { ConnectedUsers } from "./lib/connectedUsers.js";
 import { supabase, requireAuth } from "./lib/supabase.js";
 import authRouter from "./routes/auth.js";
 import cors from 'cors';
-import type { publicRoomsAvalible } from "./lib/publicRoomsAvalible.js";
+import type { publicRoomsAvalible } from "./lib/roomsAvalible.js";
 import type { SocketActiveLinks } from "./lib/siteLayeredRooms.js";
 
 const app = express();
@@ -66,9 +66,4 @@ registerSocketEvents(io, connectedUsers, publicRooms, socketActiveLinks);
 
 // Mount REST routers
 app.use('/api/auth', authRouter(supabase));
-
-//! roomsRouter is called with (io, publicRooms) but the function signature
-//! only accepts (publicRooms). This means io is bound as the publicRooms
-//! parameter, and the actual publicRooms map is silently ignored.
-//! See server/src/routes/rooms.ts for the function definition.
 app.use('/api/rooms', requireAuth, roomsRouter(io, publicRooms));
