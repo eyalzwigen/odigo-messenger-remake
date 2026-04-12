@@ -10,17 +10,17 @@ import type { User } from './user.js'
  */
 export interface PrivateRoom {
     /** Database UUID for this room */
-    roomId: string,
+    id: string,
     /** Display name, or null for DM rooms */
-    roomName: string | null,  // null for DM rooms
+    name: string | null,  // null for DM rooms
     /** True when this room is a direct message between two users */
-    isDm: boolean,
+    is_dm: boolean,
     /** Users who are members of this room */
     members: User[],
     /** Message history (not always populated -- depends on the query) */
     messages?: PrivateMessage[],
     /** When the room was created */
-    createdAt: Date
+    created_at: Date
 }
 
 /**

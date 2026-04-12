@@ -64,7 +64,7 @@ const PublicChat = ({roomId, pastMessages, onRoomDeleted, socket}: ChatData) => 
                 message: message,
                 roomId: roomId
             }
-
+            //TODO: Save message in cache
             setMessages(prev => [...prev, newMessage]);
         });
 

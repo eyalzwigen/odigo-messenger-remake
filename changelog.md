@@ -1,3 +1,3 @@
 ### Latest Changes
-Coded the fetch friends endpoint ,and accept request endpoint
-Asked claude to document the code
+Implemented DB functions: getPrivateRoom, leavePrivateRoom, deletePrivateRoom
+Changed interface variable names of PrivateRoom to match the Prisma Schema
