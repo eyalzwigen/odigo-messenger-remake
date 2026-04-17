@@ -1,5 +1,5 @@
-import type { PrivateMessage, PublicMessage } from './message.js'
-import type { User } from './user.js'
+import type { PrivateMessage, PublicMessage } from "./message.js";
+import type { User } from "./user.js";
 
 /**
  * A persistent room stored in the database.
@@ -9,18 +9,18 @@ import type { User } from './user.js'
  * only by its participants.
  */
 export interface PrivateRoom {
-    /** Database UUID for this room */
-    id: string,
-    /** Display name, or null for DM rooms */
-    name: string | null,  // null for DM rooms
-    /** True when this room is a direct message between two users */
-    is_dm: boolean,
-    /** Users who are members of this room */
-    members: User[],
-    /** Message history (not always populated -- depends on the query) */
-    messages?: PrivateMessage[],
-    /** When the room was created */
-    created_at: Date
+  /** Database UUID for this room */
+  id: string;
+  /** Display name, or null for DM rooms */
+  name: string | null; // null for DM rooms
+  /** True when this room is a direct message between two users */
+  is_dm: boolean;
+  /** Users who are members of this room */
+  members: User[];
+  /** Message history (not always populated -- depends on the query) */
+  messages?: PrivateMessage[];
+  /** When the room was created */
+  created_at: Date;
 }
 
 /**
@@ -32,12 +32,12 @@ export interface PrivateRoom {
  * logic.  It is typed as any to avoid importing NodeJS types everywhere.
  */
 export interface PublicRoom {
-    /** The room's identifier -- usually the URL or a user-chosen name */
-    roomId: string,
-    /** Users currently in the room */
-    members: User[],
-    /** In-memory message history (capped at MAX_MESSAGES_SAVED) */
-    messages?: PublicMessage[],
-    /** Handle returned by setTimeout for the inactivity cleanup timer */
-    timeout?: any
+  /** The room's identifier -- usually the URL or a user-chosen name */
+  roomId: string;
+  /** Users currently in the room */
+  members: User[];
+  /** In-memory message history (capped at MAX_MESSAGES_SAVED) */
+  messages?: PublicMessage[];
+  /** Handle returned by setTimeout for the inactivity cleanup timer */
+  timeout?: any;
 }

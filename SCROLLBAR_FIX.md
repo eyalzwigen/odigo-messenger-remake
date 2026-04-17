@@ -13,6 +13,7 @@ There are **three compounding reasons** this doesn't work:
 #### 1. `overflow-clip` is applied to the wrong element
 
 In `apps/extension/entrypoints/popup/App.tsx:72`:
+
 ```tsx
 <div className="dark w-[400px] min-h-[500px] bg-background text-foreground overflow-clip p-2">
 ```
@@ -22,10 +23,15 @@ In `apps/extension/entrypoints/popup/App.tsx:72`:
 #### 2. `html` and `body` have no scrollbar CSS
 
 In `apps/extension/style.css`, the `@layer base` block only applies:
+
 ```css
 @layer base {
-  body { @apply bg-background text-foreground; } /* colors only */
-  html { @apply font-sans; }                     /* font only */
+  body {
+    @apply bg-background text-foreground;
+  } /* colors only */
+  html {
+    @apply font-sans;
+  } /* font only */
 }
 ```
 
@@ -43,7 +49,8 @@ Add the following to `apps/extension/style.css` inside the existing `@layer base
 @layer base {
   /* ... existing rules ... */
 
-  html, body {
+  html,
+  body {
     overflow: hidden;
     scrollbar-width: none; /* Firefox */
   }
@@ -55,6 +62,7 @@ Add the following to `apps/extension/style.css` inside the existing `@layer base
 ```
 
 This targets the correct elements (`html`/`body`) that the browser uses to decide whether to show a popup scrollbar, using two standard cross-browser techniques:
+
 - `scrollbar-width: none` — modern CSS standard (Firefox, Chrome 121+)
 - `::-webkit-scrollbar { display: none }` — legacy WebKit pseudo-element (Chrome, Safari, Edge)
 
@@ -69,6 +77,7 @@ The Next.js client (`apps/client`) fails to resolve the workspace packages `@odi
 ### Root Cause
 
 In `apps/client/next.config.ts:5-7`:
+
 ```typescript
 turbopack: {
   root: path.resolve(__dirname),  // ← Bug: resolves to apps/client/
@@ -88,13 +97,13 @@ Change `next.config.ts` to point `turbopack.root` to the monorepo root:
 ```typescript
 // apps/client/next.config.ts
 import type { NextConfig } from "next";
-import path from 'path';
+import path from "path";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: path.resolve(__dirname, '../..'),  // ← repo root
+    root: path.resolve(__dirname, "../.."), // ← repo root
   },
-  transpilePackages: ['@odigo/ui', '@odigo/shared'],
+  transpilePackages: ["@odigo/ui", "@odigo/shared"],
 };
 
 export default nextConfig;
@@ -104,6 +113,6 @@ Alternatively, **remove the `turbopack` block entirely** — Next.js will auto-d
 
 ```typescript
 const nextConfig: NextConfig = {
-  transpilePackages: ['@odigo/ui', '@odigo/shared'],
+  transpilePackages: ["@odigo/ui", "@odigo/shared"],
 };
 ```

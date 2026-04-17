@@ -15,31 +15,31 @@ const host = getHost();
  * a null access token, a null refresh token, and an error if there was an error
  */
 export async function handleLogin(
-
-    email: string,
-    password: string
-
+  email: string,
+  password: string,
 ): Promise<
-{access_token: string, refresh_token: string, error: null} |
-{access_token: null, refresh_token: null, error: string}>
-{
+  | { access_token: string; refresh_token: string; error: null }
+  | { access_token: null; refresh_token: null; error: string }
+> {
+  const req = await fetch(`${host}/api/auth/login`, {
+    method: "POST",
+    body: JSON.stringify({
+      email: email,
+      password: password,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
-    const req = await fetch(`${host}/api/auth/login`, {
-        method: 'POST',
-        body: JSON.stringify({
-            email: email,
-            password: password
-        }),
-        headers: {'Content-Type': 'application/json'}
-    });
+  const res = await req.json();
+  if (res.error)
+    return { access_token: null, refresh_token: null, error: res.error };
 
-    const res = await req.json();
-    if (res.error) return {access_token: null, refresh_token: null, error: res.error};
-
-    return {access_token: res.access_token, refresh_token: res.refresh_token, error: null};
-
+  return {
+    access_token: res.access_token,
+    refresh_token: res.refresh_token,
+    error: null,
+  };
 }
-
 
 /**
  * An handler function that is used to register a user
@@ -58,28 +58,24 @@ export async function handleLogin(
  * string if there was an error
  */
 export async function handleRegisteration(
-    userName: string,
-    email: string,
-    password: string,
-    confirmation: string
-
+  userName: string,
+  email: string,
+  password: string,
+  confirmation: string,
 ): Promise<null | string> {
+  const req = await fetch(`${host}/api/auth/register`, {
+    method: "POST",
+    body: JSON.stringify({
+      username: userName,
+      email: email,
+      password: password,
+      confirmation: confirmation,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
-    const req = await fetch(`${host}/api/auth/register`, {
-        method: 'POST',
-        body: JSON.stringify({
-            username: userName,
-            email: email,
-            password: password,
-            confirmation: confirmation
-        }),
-        headers: {'Content-Type': 'application/json'}
-    });
+  const res = await req.json();
+  if (res.error) return res.error; // An error occured when registering user
 
-    const res = await req.json();
-    if (res.error) return res.error; // An error occured when registering user
-
-
-    return null // User needs email confirmation before accessing account
-
+  return null; // User needs email confirmation before accessing account
 }

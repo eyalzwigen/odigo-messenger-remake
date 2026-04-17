@@ -1,5 +1,3 @@
-import type { User } from '../../../shared/lib/user.js';
-
 /**
  * Tracks every socket that belongs to a given user.
  *

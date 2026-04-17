@@ -8,16 +8,15 @@ import "@odigo/ui/globals.css";
 import { SessionProvider } from "@/lib/SessionContext";
 import Navbar from "@/components/Navbar";
 
-
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,7 +31,8 @@ export const metadata: Metadata = {
  * @param children - The page component rendered inside the layout
  */
 export default function RootLayout({
-  children,}: Readonly<{
+  children,
+}: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
@@ -40,15 +40,13 @@ export default function RootLayout({
       <body
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased dark`}
       >
-      <SessionProvider>
-        <div className="flex flex-col h-screen">
-          <Navbar />
-          {/* Main content fills remaining height and is independently scrollable */}
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
-        </div>
-      </SessionProvider>
+        <SessionProvider>
+          <div className="flex flex-col h-screen">
+            <Navbar />
+            {/* Main content fills remaining height and is independently scrollable */}
+            <main className="flex-1 overflow-auto">{children}</main>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

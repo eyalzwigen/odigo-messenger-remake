@@ -5,7 +5,7 @@
 // (web client, browser extension) and then read wherever a request is made.
 
 /** Module-level host string, defaults to localhost for development */
-let host: string = 'http://localhost:8080';
+let host: string = "http://localhost:8080";
 
 /**
  * Overrides the default host URL.
@@ -14,7 +14,7 @@ let host: string = 'http://localhost:8080';
  * @param url - The base URL of the Express server (e.g. "https://api.example.com")
  */
 export function setHost(url: string) {
-    host = url;
+  host = url;
 }
 
 /**
@@ -24,5 +24,5 @@ export function setHost(url: string) {
  * @returns The base server URL string
  */
 export function getHost() {
-    return host;
+  return host;
 }

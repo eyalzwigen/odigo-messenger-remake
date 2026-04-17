@@ -2,7 +2,10 @@
 // All functions talk to Prisma and return plain objects (not Prisma model
 // instances) so callers don't depend on generated Prisma types.
 
-import type { FriendRequestInput, Friendship } from "../../../packages/shared/lib/friends.js";
+import type {
+  FriendRequestInput,
+  Friendship,
+} from "../../../packages/shared/lib/friends.js";
 import prisma from "./index.js";
 
 /**
@@ -12,7 +15,7 @@ import prisma from "./index.js";
  * @returns The newly created Prisma FriendRequest record
  */
 export async function createFriendRequest(data: FriendRequestInput) {
-    return await prisma.friendRequest.create({ data });
+  return await prisma.friendRequest.create({ data });
 }
 
 /**
@@ -22,31 +25,33 @@ export async function createFriendRequest(data: FriendRequestInput) {
  * @param friendRequest - The friend request to accept (must include a valid id)
  * @returns The new Friendship object, or null if the operation failed
  */
-export async function acceptFriendRequest(friendRequest: FriendRequestInput): Promise<Friendship | null> {
-    try {
-        const friendship = await prisma.friendship.create({
-            data: {
-                user_a_id: friendRequest.sender_id,
-                user_b_id: friendRequest.receiver_id
-            },
-            include: {
-                user_a: true,
-                user_b: true
-            }
-        });
+export async function acceptFriendRequest(
+  friendRequest: FriendRequestInput,
+): Promise<Friendship | null> {
+  try {
+    const friendship = await prisma.friendship.create({
+      data: {
+        user_a_id: friendRequest.sender_id,
+        user_b_id: friendRequest.receiver_id,
+      },
+      include: {
+        user_a: true,
+        user_b: true,
+      },
+    });
 
-        // Remove the request now that it has been fulfilled
-        await prisma.friendRequest.delete({
-            where: {
-                id: friendRequest.id
-            }
-        });
+    // Remove the request now that it has been fulfilled
+    await prisma.friendRequest.delete({
+      where: {
+        id: friendRequest.id,
+      },
+    });
 
-        return friendship;
-    } catch (e) {
-        console.error("acceptFriendRequest failed:", e);
-        return null;
-    }
+    return friendship;
+  } catch (e) {
+    console.error("acceptFriendRequest failed:", e);
+    return null;
+  }
 }
 
 /**
@@ -57,24 +62,27 @@ export async function acceptFriendRequest(friendRequest: FriendRequestInput): Pr
  * @param user_b_id - ID of the second user
  * @returns The Friendship if one exists, otherwise null
  */
-export async function getFriendship(user_a_id: string, user_b_id: string): Promise<Friendship | null> {
-    const res = await prisma.friendship.findFirst({
-        where: {
-            OR: [
-                { user_a_id, user_b_id },
-                { user_a_id: user_b_id, user_b_id: user_a_id }
-            ]
-        }
-    });
+export async function getFriendship(
+  user_a_id: string,
+  user_b_id: string,
+): Promise<Friendship | null> {
+  const res = await prisma.friendship.findFirst({
+    where: {
+      OR: [
+        { user_a_id, user_b_id },
+        { user_a_id: user_b_id, user_b_id: user_a_id },
+      ],
+    },
+  });
 
-    if (!res) return null;
+  if (!res) return null;
 
-    return {
-        id: res.id,
-        created_at: res.created_at,
-        user_a_id: res.user_a_id,
-        user_b_id: res.user_b_id,
-    };
+  return {
+    id: res.id,
+    created_at: res.created_at,
+    user_a_id: res.user_a_id,
+    user_b_id: res.user_b_id,
+  };
 }
 
 /**
@@ -83,17 +91,16 @@ export async function getFriendship(user_a_id: string, user_b_id: string): Promi
  * @param user_id - The ID of the user whose friendships to fetch
  * @returns An array of Friendship objects, or null if none exist
  */
-export async function fetchFriendships(user_id: string): Promise<Friendship[] | null> {
-    const res = await prisma.friendship.findMany({
-        where: {
-            OR: [
-                { user_a_id: user_id },
-                { user_b_id: user_id }
-            ]
-        }
-    });
+export async function fetchFriendships(
+  user_id: string,
+): Promise<Friendship[] | null> {
+  const res = await prisma.friendship.findMany({
+    where: {
+      OR: [{ user_a_id: user_id }, { user_b_id: user_id }],
+    },
+  });
 
-    return res;
+  return res;
 }
 
 /**
@@ -104,24 +111,27 @@ export async function fetchFriendships(user_id: string): Promise<Friendship[] | 
  * @param receiver_id - ID of the other user
  * @returns The FriendRequestInput if a request exists, otherwise null
  */
-export async function getFriendRequestBySenderAndReceiver(sender_id: string, receiver_id: string): Promise<FriendRequestInput | null> {
-    const res = await prisma.friendRequest.findFirst({
-        where: {
-            OR: [
-                { sender_id, receiver_id },
-                { sender_id: receiver_id, receiver_id: sender_id }
-            ]
-        }
-    });
+export async function getFriendRequestBySenderAndReceiver(
+  sender_id: string,
+  receiver_id: string,
+): Promise<FriendRequestInput | null> {
+  const res = await prisma.friendRequest.findFirst({
+    where: {
+      OR: [
+        { sender_id, receiver_id },
+        { sender_id: receiver_id, receiver_id: sender_id },
+      ],
+    },
+  });
 
-    if (!res) return null;
+  if (!res) return null;
 
-    return {
-        id: res.id,
-        created_at: res.created_at,
-        sender_id: res.sender_id,
-        receiver_id: res.receiver_id
-    };
+  return {
+    id: res.id,
+    created_at: res.created_at,
+    sender_id: res.sender_id,
+    receiver_id: res.receiver_id,
+  };
 }
 
 /**
@@ -130,19 +140,43 @@ export async function getFriendRequestBySenderAndReceiver(sender_id: string, rec
  * @param request_id - The UUID of the FriendRequest row
  * @returns The FriendRequestInput if found, otherwise null
  */
-export async function getFriendRequestById(request_id: string): Promise<FriendRequestInput | null> {
-    const res = await prisma.friendRequest.findUnique({
-        where: {
-            id: request_id
-        }
-    });
+export async function getFriendRequestById(
+  request_id: string,
+): Promise<FriendRequestInput | null> {
+  const res = await prisma.friendRequest.findUnique({
+    where: {
+      id: request_id,
+    },
+  });
 
-    if (!res) return null;
+  if (!res) return null;
 
-    return {
-        id: res.id,
-        created_at: res.created_at,
-        sender_id: res.sender_id,
-        receiver_id: res.receiver_id
-    };
+  return {
+    id: res.id,
+    created_at: res.created_at,
+    sender_id: res.sender_id,
+    receiver_id: res.receiver_id,
+  };
+}
+
+export async function deleteFriendship(
+  user_a_id: string,
+  user_b_id: string,
+  userId: string,
+): Promise<Friendship | null> {
+  const friendship: Friendship | null = await getFriendship(
+    user_a_id,
+    user_b_id,
+  );
+  if (!friendship) return null;
+  if (!(friendship.user_a_id === userId || friendship.user_b_id === userId))
+    return null;
+
+  const res = await prisma.friendship.delete({
+    where: {
+      id: friendship.id,
+    },
+  });
+
+  return res;
 }

@@ -3,7 +3,7 @@
 // browser-side code in general.  Do not use them in Server Components
 // or server actions -- use the server client from proxy.ts instead.
 
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr";
 
 /**
  * Creates a new browser Supabase client configured with the public
@@ -15,8 +15,8 @@ import { createBrowserClient } from '@supabase/ssr'
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+  );
 }
 
 /**

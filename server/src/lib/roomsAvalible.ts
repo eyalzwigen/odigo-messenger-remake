@@ -1,4 +1,7 @@
-import type { PrivateRoom, PublicRoom } from "../../../packages/shared/lib/room.js";
+import type {
+  PrivateRoom,
+  PublicRoom,
+} from "../../../packages/shared/lib/room.js";
 
 /**
  * Tracks all currently active public rooms in memory.

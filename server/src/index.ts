@@ -9,7 +9,7 @@ import roomsRouter from "./routes/rooms.js";
 import type { ConnectedUsers } from "./lib/connectedUsers.js";
 import { supabase, requireAuth } from "./lib/supabase.js";
 import authRouter from "./routes/auth.js";
-import cors from 'cors';
+import cors from "cors";
 import type { publicRoomsAvalible } from "./lib/roomsAvalible.js";
 import type { SocketActiveLinks } from "./lib/siteLayeredRooms.js";
 
@@ -19,20 +19,20 @@ const app = express();
 const port: number = parseInt(process.env.EXPRESS_PORT ?? "8080");
 
 const server = app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
 
 // Attach Socket.IO to the same HTTP server so both REST and WebSocket
 // traffic share a single port.
 export const io = new Server(server, {
-    cors: {
-        // Allow every origin — tighten this in production if needed
-        origin: (origin, callback) => {
-            callback(null, true);
-        },
-        methods: ['GET', 'POST'],
-        credentials: true
-    }
+  cors: {
+    // Allow every origin — tighten this in production if needed
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 // In-memory stores — these live for the lifetime of the process.
@@ -49,14 +49,16 @@ const publicRooms: publicRoomsAvalible = new Map();
 const socketActiveLinks: SocketActiveLinks = new Map();
 
 // CORS for REST endpoints.  Same permissive policy as Socket.IO above.
-app.use(cors({
+app.use(
+  cors({
     origin: (origin, callback) => {
-        callback(null, true);
+      callback(null, true);
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}));
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 
 // Parse JSON request bodies before any route handler runs
 app.use(express.json());
@@ -65,5 +67,5 @@ app.use(express.json());
 registerSocketEvents(io, connectedUsers, publicRooms, socketActiveLinks);
 
 // Mount REST routers
-app.use('/api/auth', authRouter(supabase));
-app.use('/api/rooms', requireAuth, roomsRouter(io, publicRooms));
+app.use("/api/auth", authRouter(supabase));
+app.use("/api/rooms", requireAuth, roomsRouter(io, publicRooms));

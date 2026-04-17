@@ -3,13 +3,13 @@
 // NEXT_PUBLIC_ variables used by the web client, since WXT has its own
 // env variable convention.
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 /**
  * The Supabase client instance shared across the extension.
  * Configured with the anon/publishable key -- not the service role.
  */
 export const supabase = createClient(
-    import.meta.env.WXT_SUPABASE_URL!,
-    import.meta.env.WXT_SUPABASE_PUBLISHABLE_KEY!
-)
+  import.meta.env.WXT_SUPABASE_URL!,
+  import.meta.env.WXT_SUPABASE_PUBLISHABLE_KEY!,
+);

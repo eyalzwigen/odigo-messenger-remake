@@ -15,34 +15,34 @@ import { saveSession } from "../lib/session";
  * which then connects the socket and re-renders the panel with the chat view.
  */
 export default function AuthView() {
+  /**
+   * Called by AuthForm with the submitted form data.
+   * Delegates to the shared login handler and, on success, saves the tokens
+   * and calls supabase.auth.setSession to trigger the auth state listener.
+   *
+   * @param formData - FormData from the login HTML form
+   */
+  const LogingUser = async (formData: FormData) => {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    /**
-     * Called by AuthForm with the submitted form data.
-     * Delegates to the shared login handler and, on success, saves the tokens
-     * and calls supabase.auth.setSession to trigger the auth state listener.
-     *
-     * @param formData - FormData from the login HTML form
-     */
-    const LogingUser = async (formData: FormData) => {
-        const email = formData.get('email') as string;
-        const password = formData.get('password') as string;
+    const { access_token, refresh_token, error } = await handleLogin(
+      email,
+      password,
+    );
 
-        const { access_token, refresh_token, error } = await handleLogin(email, password);
+    if (!access_token) {
+      alert(error);
+      return;
+    }
 
-        if (!access_token) {
-            alert(error);
-            return;
-        }
+    // Persist tokens so the background service worker and future panel
+    // opens can restore the session without logging in again
+    await saveSession(access_token, refresh_token);
 
-        // Persist tokens so the background service worker and future panel
-        // opens can restore the session without logging in again
-        await saveSession(access_token, refresh_token);
+    // this triggers onAuthStateChange with SIGNED_IN
+    await supabase.auth.setSession({ access_token, refresh_token });
+  };
 
-        // this triggers onAuthStateChange with SIGNED_IN
-        await supabase.auth.setSession({ access_token, refresh_token });
-    };
-
-    return (
-        <AuthForm mode='login' action={LogingUser}></AuthForm>
-    )
+  return <AuthForm mode="login" action={LogingUser}></AuthForm>;
 }

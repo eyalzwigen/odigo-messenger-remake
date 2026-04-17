@@ -1,14 +1,13 @@
-'use client';
+"use client";
 
 // Home / landing page for authenticated users.
 // Prompts the user to connect their socket and navigate to the public rooms list.
 
-import { useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { connectUser } from '@odigo/shared/lib/socket'
-import { useSession } from '@/lib/SessionContext';
-import { Button } from '@odigo/ui/components/button';
-
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { connectUser } from "@odigo/shared/lib/socket";
+import { useSession } from "@/lib/SessionContext";
+import { Button } from "@odigo/ui/components/button";
 
 /**
  * The main landing page shown after login.
@@ -16,7 +15,7 @@ import { Button } from '@odigo/ui/components/button';
  * the public rooms browser.
  */
 export default function Home() {
-  const usernameInput = useRef<HTMLInputElement>(null)
+  const usernameInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const session = useSession();
 
@@ -25,11 +24,10 @@ export default function Home() {
    * The session access token is used to authenticate the socket handshake.
    */
   const Start = () => {
-
     connectUser(session?.access_token!, () => {
-      router.push('/rooms/public');
+      router.push("/rooms/public");
     });
-  }
+  };
 
   return (
     <div>
@@ -37,4 +35,4 @@ export default function Home() {
       <Button onClick={Start}>Start Chatting!</Button>
     </div>
   );
-};
+}

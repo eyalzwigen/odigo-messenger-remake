@@ -6,10 +6,10 @@
  * populated when the object is constructed right after authentication.
  */
 export interface User {
-    /** Supabase JWT access token -- present only when freshly authenticated */
-    accessToken?: string,
-    /** Supabase user UUID */
-    id: string,
-    /** Display name chosen at registration */
-    username: string,
+  /** Supabase JWT access token -- present only when freshly authenticated */
+  accessToken?: string;
+  /** Supabase user UUID */
+  id: string;
+  /** Display name chosen at registration */
+  username: string;
 }

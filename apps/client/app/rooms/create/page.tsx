@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // Page for creating a new named public room from the web client.
 
@@ -15,26 +15,24 @@ import { Socket } from "socket.io-client";
  * chat page on success, or shows an alert on error.
  */
 export default function CreateRoom() {
-    const router = useRouter();
-    const socket: Socket = useSocket()!;
+  const router = useRouter();
+  const socket: Socket = useSocket()!;
 
-    /**
-     * Handles form submission from CreatePublicRoomForm.
-     * Reads the room_name field, asks the server to create the room, and
-     * navigates into it if successful.
-     *
-     * @param formData - FormData from the create-room HTML form
-     */
-    const OnCreateRoom = async  (formData: FormData) => {
-        const roomId = formData.get('room_name') as string
-        const { error } = await createPublicRoom(socket, roomId);
-        if (error) {
-            alert(error);
-            return;
-        }
-        router.push(`/room/${roomId}/chat`);
-    };
-    return (
-        <CreatePublicRoomForm callback={OnCreateRoom}></CreatePublicRoomForm>
-    );
+  /**
+   * Handles form submission from CreatePublicRoomForm.
+   * Reads the room_name field, asks the server to create the room, and
+   * navigates into it if successful.
+   *
+   * @param formData - FormData from the create-room HTML form
+   */
+  const OnCreateRoom = async (formData: FormData) => {
+    const roomId = formData.get("room_name") as string;
+    const { error } = await createPublicRoom(socket, roomId);
+    if (error) {
+      alert(error);
+      return;
+    }
+    router.push(`/room/${roomId}/chat`);
+  };
+  return <CreatePublicRoomForm callback={OnCreateRoom}></CreatePublicRoomForm>;
 }

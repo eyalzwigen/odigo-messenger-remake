@@ -71,7 +71,7 @@
   --destructive: #ed4245;
   --border: #e3e5e8;
   --input: #e3e5e8;
-  --ring: #6d6f78; 
+  --ring: #6d6f78;
   --chart-1: #5865f2;
   --chart-2: #57f287;
   --chart-3: #fee75c;
@@ -107,7 +107,7 @@
   --destructive: #ed4245;
   --border: #606269;
   --input: #404249;
-  --ring: #6d6f78; 
+  --ring: #6d6f78;
   --chart-1: #5865f2;
   --chart-2: #57f287;
   --chart-3: #fee75c;
@@ -134,13 +134,13 @@
     @apply font-sans;
   }
 
-  html, body {
+  html,
+  body {
     overflow: hidden;
     scrollbar-width: none; /* Firefox */
   }
   html::-webkit-scrollbar,
   body::-webkit-scrollbar {
     display: none; /* Chrome / Safari / Edge */
-    
   }
 }

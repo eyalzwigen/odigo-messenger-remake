@@ -1,4 +1,4 @@
-import type { User } from "../../../packages/shared/lib/user.js"
+import type { User } from "../../../packages/shared/lib/user.js";
 
 /**
  * Describes a single active-link entry before it was simplified to use
@@ -6,8 +6,8 @@ import type { User } from "../../../packages/shared/lib/user.js"
  * reference.
  */
 export interface SocketsActiveLinks {
-    url: string,
-    activeUsers: User[]
+  url: string;
+  activeUsers: User[];
 }
 
 /**

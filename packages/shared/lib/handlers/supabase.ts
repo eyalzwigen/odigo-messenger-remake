@@ -7,9 +7,9 @@
  * @throws {Error} If no token is provided (user is not authenticated)
  */
 export async function getAuthHeaders(token: string) {
-    if (!token) throw new Error('Not authenticated');
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-    };
+  if (!token) throw new Error("Not authenticated");
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
 }

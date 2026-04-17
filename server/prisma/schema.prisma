@@ -21,6 +21,7 @@ model User {
   received_friend_requests FriendRequest[] @relation("FriendRequestReceiver")
   sent_group_invites       GroupInvite[]   @relation("GroupInviteSender")
   received_group_invites   GroupInvite[]   @relation("GroupInviteReceiver")
+  notifications            Notification[]  @relation("NotificationUser")
 }
 
 model Room {
@@ -80,8 +81,8 @@ model Friendship {
 }
 
 model FriendRequest {
-  id         String        @id @default(uuid()) @db.Uuid
-  created_at DateTime      @default(now())
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now())
 
   sender_id String @db.Uuid
   sender    User   @relation("FriendRequestSender", fields: [sender_id], references: [id])
@@ -93,8 +94,8 @@ model FriendRequest {
 }
 
 model GroupInvite {
-  id         String        @id @default(uuid()) @db.Uuid
-  created_at DateTime      @default(now())
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now())
 
   room_id String @db.Uuid
   room    Room   @relation(fields: [room_id], references: [id])
@@ -106,4 +107,22 @@ model GroupInvite {
   receiver    User   @relation("GroupInviteReceiver", fields: [receiver_id], references: [id])
 
   @@unique([room_id, receiver_id])
+}
+
+enum NotificationType {
+  Unfriend
+}
+
+model Notification {
+  id         String           @id @default(uuid()) @db.Uuid
+  created_at DateTime         @default(now())
+  read       Boolean          @default(false)
+
+  type    NotificationType
+  data    Json
+
+  user_id String @db.Uuid
+  user    User   @relation("NotificationUser", fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
 }
