@@ -26,6 +26,11 @@ export interface FriendRequest {
  * they are joined server-side after validation.
  */
 // Validates raw incoming data only -- sender/receiver are joined server-side
+export const FriendRequestCreateValidator = z.object({
+  sender_id: z.string(),
+  receiver_id: z.string(),
+});
+
 export const FriendRequestValidator = z.object({
   id: z.string(),
   created_at: z.date(),
@@ -33,7 +38,9 @@ export const FriendRequestValidator = z.object({
   receiver_id: z.string(),
 });
 
-/** The validated shape of a friend request as it comes from the client. */
+export type FriendRequestCreateInput = z.infer<
+  typeof FriendRequestCreateValidator
+>;
 export type FriendRequestInput = z.infer<typeof FriendRequestValidator>;
 
 /**

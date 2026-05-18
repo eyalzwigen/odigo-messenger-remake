@@ -3,6 +3,7 @@
 // instances) so callers don't depend on generated Prisma types.
 
 import type {
+  FriendRequestCreateInput,
   FriendRequestInput,
   Friendship,
 } from "../../../packages/shared/lib/friends.js";
@@ -11,10 +12,10 @@ import prisma from "./index.js";
 /**
  * Inserts a new friend request row into the database.
  *
- * @param data - The validated friend request payload (sender_id, receiver_id, etc.)
+ * @param data - The validated friend request payload (sender_id, receiver_id)
  * @returns The newly created Prisma FriendRequest record
  */
-export async function createFriendRequest(data: FriendRequestInput) {
+export async function createFriendRequest(data: FriendRequestCreateInput) {
   return await prisma.friendRequest.create({ data });
 }
 
@@ -100,7 +101,7 @@ export async function fetchFriendships(
     },
   });
 
-  return res;
+  return res ?? null;
 }
 
 /**

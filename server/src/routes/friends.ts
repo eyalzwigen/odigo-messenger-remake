@@ -6,7 +6,8 @@ import type { Server } from "socket.io";
 import type { ConnectedUsers } from "../lib/connectedUsers.js";
 import { Router } from "express";
 import {
-  FriendRequestValidator,
+  FriendRequestCreateValidator,
+  type FriendRequestCreateInput,
   type FriendRequestInput,
   type Friendship,
 } from "../../../packages/shared/lib/friends.js";
@@ -75,13 +76,13 @@ export default function friendsRouter(
    *          409 (already friends or self-request) | 500 (unexpected)
    */
   router.post("/request", async (req, res): Promise<void> => {
-    const result = FriendRequestValidator.safeParse(req.body);
+    const result = FriendRequestCreateValidator.safeParse(req.body);
     if (!result.success) {
       res.status(400).json({ error: result.error });
       return;
     }
 
-    const friendRequest: FriendRequestInput = result.data;
+    const friendRequest: FriendRequestCreateInput = result.data;
     try {
       // Check if the request sender has the same sender_id as in the request
       if (!(req.user?.id === friendRequest.sender_id)) {
@@ -191,74 +192,51 @@ export default function friendsRouter(
   });
 
   /**
-   * POST /api/friends/unfriend
+   * DELETE /api/friends/:id
    *
-   * Removes a friendship between two users.
+   * Removes a friendship between the authenticated user and the target user.
+   * This operation is intentionally silent: no real-time "unfriend" notification
+   * is sent to the other party.
    */
   router.delete("/:id", async (req, res) => {
+    const friendId = req.params.id;
+    if (!friendId) {
+      res.status(400).json({ error: "No friend id given" });
+      return;
+    }
+
+    if (friendId === req.user?.id) {
+      res.status(400).json({ error: "Cannot unfriend yourself" });
+      return;
+    }
+
     try {
-      //! Unfriending deletes the chat also
-
-      // Extract user id from request
-      const friendId: string = req.params.id;
-      if (!friendId) {
-        res.status(400).json({ error: "No friend id given" });
-        return;
-      }
-
-      // Check if user has a friendship with the user extracted
       const checkFriendship: Friendship | null = await getFriendship(
         req.user?.id!,
         friendId,
       );
 
-      if (checkFriendship) {
-
-        // Add notification to db
-        const notification: NotificationInput | null = await createNotification(friendId, "Unfriend", {
-          unfriend: req.user?.id!
-        });
-
-        if (!notification) {
-          res.status(501).json({error: "Couldn't unfriend"});
-          return;
-        }
-
-        // Delete friendship-based chat room from DB.
-        //* the chat will be read only and only avalible via cache
-        const room = await deletePrivateRoom(
-          checkFriendship.dm_room_id!,
-          req.user?.id!,
-        );
-
-        // Delete friendship
-        const deletedFriend = await deleteFriendship(
-          checkFriendship.user_a_id,
-          checkFriendship.user_b_id,
-          req.user?.id!,
-        );
-
-        if (connectedUsers.has(friendId)) {
-          const sockets = connectedUsers.get(friendId);
-          if (!sockets) {
-            // response of 200 with json response that indicates the unfriending
-            res.status(200).json({ friendship: checkFriendship });
-            return;
-          }
-
-          for (const socket of sockets) {
-            io.to(socket).emit("unfriend", req.user?.id!);
-          }
-        }
-
-        // response of 200 with json response that indicates the unfriending
-        res.status(200).json({ friendship: checkFriendship });
-      } else {
-        // Send a 409 error because you can't unfriend someone you're not friends with
-        res.status(409).json({ error: "Can't unfriend someone you're not friends with" });
+      if (!checkFriendship) {
+        res
+          .status(409)
+          .json({ error: "Can't unfriend someone you're not friends with" });
+        return;
       }
+
+      if (checkFriendship.dm_room_id) {
+        await deletePrivateRoom(checkFriendship.dm_room_id, req.user?.id!);
+      }
+
+      await deleteFriendship(
+        checkFriendship.user_a_id,
+        checkFriendship.user_b_id,
+        req.user?.id!,
+      );
+
+      res.status(200).json({ friendship: checkFriendship });
     } catch (e) {
-      res.status(404).json({ error: "Room not found" });
+      console.error("Failed to unfriend:", e);
+      res.status(500).json({ error: "Unexpected server error" });
     }
   });
 }
