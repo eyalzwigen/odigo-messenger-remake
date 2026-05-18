@@ -115,3 +115,17 @@ export function deletePublicRoom(
   // clean up publicRooms map
   publicRooms.delete(roomId);
 }
+
+/**
+ * Removes a public room from the server, notifies all members, and cleans up
+ * any Socket.IO state and the inactivity timer.
+ *
+ * @param roomId - The ID of the public room to delete
+ * @param io - The Socket.IO server instance, used to broadcast and evict sockets
+ * @param publicRooms - The shared in-memory rooms map to remove the entry from
+ */
+export function deletePrivateRoom(
+  roomId: string,
+  io: Server,
+) {
+}

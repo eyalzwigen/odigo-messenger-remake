@@ -8,7 +8,7 @@ import type { publicRoomsAvalible } from "../lib/roomsAvalible.js";
 import supabase from "../lib/supabase.js";
 import type { User } from "../../../packages/shared/lib/user.ts";
 import type { PublicRoom } from "../../../packages/shared/lib/room.js";
-import { deleteRoom } from "../routes/rooms.js";
+import {deletePublicRoom, deletePrivateRoom} from "../routes/rooms.js";
 import type { SocketActiveLinks } from "../lib/siteLayeredRooms.js";
 
 /**
@@ -179,7 +179,7 @@ export function registerSocketEvents(
           members: [],
           messages: [],
           timeout: setTimeout(
-            () => deleteRoom(link, io, publicRooms),
+            () => deletePublicRoom(link, io, publicRooms),
             10 * 60 * 1000,
           ),
         });
@@ -247,7 +247,7 @@ export function registerSocketEvents(
         ],
         messages: [],
         timeout: setTimeout(
-          () => deleteRoom(roomId, io, publicRooms),
+          () => deletePublicRoom(roomId, io, publicRooms),
           10 * 60 * 1000,
         ),
       });

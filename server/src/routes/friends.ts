@@ -21,6 +21,8 @@ import {
 } from "../db/friends.js";
 import { deletePrivateRoom } from "../db/rooms.js";
 import { Socket } from "socket.io-client";
+import type { NotificationInput } from "../../../packages/shared/lib/notifications.js";
+import { createNotification, deleteNotification } from "../db/notifications.js";
 
 /**
  * Builds and returns the friends router.
@@ -211,12 +213,24 @@ export default function friendsRouter(
       );
 
       if (checkFriendship) {
+
+        // Add notification to db
+        const notification: NotificationInput | null = await createNotification(friendId, "Unfriend", {
+          unfriend: req.user?.id!
+        });
+
+        if (!notification) {
+          res.status(501).json({error: "Couldn't unfriend"});
+          return;
+        }
+
         // Delete friendship-based chat room from DB.
         //* the chat will be read only and only avalible via cache
         const room = await deletePrivateRoom(
           checkFriendship.dm_room_id!,
           req.user?.id!,
         );
+
         // Delete friendship
         const deletedFriend = await deleteFriendship(
           checkFriendship.user_a_id,
@@ -224,10 +238,7 @@ export default function friendsRouter(
           req.user?.id!,
         );
 
-        //TODO: Add notification to db
-
         if (connectedUsers.has(friendId)) {
-          //TODO: Something
           const sockets = connectedUsers.get(friendId);
           if (!sockets) {
             // response of 200 with json response that indicates the unfriending
@@ -236,6 +247,7 @@ export default function friendsRouter(
           }
 
           for (const socket of sockets) {
+            io.to(socket).emit("unfriend", req.user?.id!);
           }
         }
 
@@ -243,9 +255,7 @@ export default function friendsRouter(
         res.status(200).json({ friendship: checkFriendship });
       } else {
         // Send a 409 error because you can't unfriend someone you're not friends with
-        res
-          .status(409)
-          .json({ error: "Can't unfriend someone you're not friends with" });
+        res.status(409).json({ error: "Can't unfriend someone you're not friends with" });
       }
     } catch (e) {
       res.status(404).json({ error: "Room not found" });

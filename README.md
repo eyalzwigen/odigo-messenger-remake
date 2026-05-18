@@ -381,5 +381,4 @@ This is a solo project currently in active development. If you'd like to contrib
 
 _Odigo — bringing back the idea that proved itself once, with modern infrastructure._
 
-All credit belongs to my **LORD** and saviour, **Jesus Christ**. \
 Made with :hearts: and people in mind.

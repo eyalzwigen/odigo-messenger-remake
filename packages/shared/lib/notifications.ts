@@ -28,14 +28,14 @@ export interface Notification {
  * user is never in the incoming payload -- it is joined server-side after validation.
  */
 export const NotificationValidator = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   created_at: z.date(),
   read: z.boolean(),
 
   type: z.enum(["Unfriend"]),
   data: z.record(z.string(), z.unknown()),
 
-  user_id: z.string().uuid(),
+  user_id: z.uuid(),
 });
 
 /** The validated shape of a notification as it comes from the client. */
